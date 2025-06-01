@@ -2,7 +2,7 @@
 #include <iostream>
 #include <sstream>
 #include <cctype>
-//глшка орпепопе
+
 // Преобразование строки (например, "e2") в позицию на доске
 Position ChessGame::parsePosition(const std::string& input) const {
     if (input.length() != 2) return Position(-1, -1); // Неправильный формат
