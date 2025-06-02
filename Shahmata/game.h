@@ -1,22 +1,22 @@
-#ifndef GAME_H
+п»ї#ifndef GAME_H
 #define GAME_H
 
 #include "chess.h"
 #include <string>
 
-// Класс для управления игровым процессом
+// РљР»Р°СЃСЃ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РёРіСЂРѕРІС‹Рј РїСЂРѕС†РµСЃСЃРѕРј
 class ChessGame {
 private:
-    ChessBoard board; // Шахматная доска
+    ChessBoard board; // РЁР°С…РјР°С‚РЅР°СЏ РґРѕСЃРєР°
 
-    // Вспомогательные методы
-    Position parsePosition(const std::string& input) const; // Преобразование строки в позицию
-    void printHelp() const; // Вывод справки по командам
+    // Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РјРµС‚РѕРґС‹
+    Position parsePosition(const std::string& input) const; // РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ СЃС‚СЂРѕРєРё РІ РїРѕР·РёС†РёСЋ
+    void printHelp() const; // Р’С‹РІРѕРґ СЃРїСЂР°РІРєРё РїРѕ РєРѕРјР°РЅРґР°Рј
 
 public:
-    void run(); // Основной игровой цикл
-    void saveGame(const std::string& filename) const; // Сохранение игры
-    bool loadGame(const std::string& filename);  // Загрузка игры
+    void run(); // РћСЃРЅРѕРІРЅРѕР№ РёРіСЂРѕРІРѕР№ С†РёРєР»
+    void saveGame(const std::string& filename) const; // РЎРѕС…СЂР°РЅРµРЅРёРµ РёРіСЂС‹
+    bool loadGame(const std::string& filename);  // Р—Р°РіСЂСѓР·РєР° РёРіСЂС‹
 };
 
 #endif // GAME_H

@@ -1,43 +1,43 @@
-#include "game.h"
+п»ї#include "game.h"
 #include <iostream>
 #include <sstream>
 #include <cctype>
 
-// Преобразование строки (например, "e2") в позицию на доске
+// РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ СЃС‚СЂРѕРєРё (РЅР°РїСЂРёРјРµСЂ, "e2") РІ РїРѕР·РёС†РёСЋ РЅР° РґРѕСЃРєРµ
 Position ChessGame::parsePosition(const std::string& input) const {
-    if (input.length() != 2) return Position(-1, -1); // Неправильный формат
+    if (input.length() != 2) return Position(-1, -1); // РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ С„РѕСЂРјР°С‚
 
-    char file = tolower(input[0]); // Буква (a-h)
-    char rank = input[1]; // Цифра (1-8)
+    char file = tolower(input[0]); // Р‘СѓРєРІР° (a-h)
+    char rank = input[1]; // Р¦РёС„СЂР° (1-8)
 
-    // Проверка допустимости координат
+    // РџСЂРѕРІРµСЂРєР° РґРѕРїСѓСЃС‚РёРјРѕСЃС‚Рё РєРѕРѕСЂРґРёРЅР°С‚
     if (file < 'a' || file > 'h' || rank < '1' || rank > '8') {
         return Position(-1, -1);
     }
 
-    // Преобразование в координаты доски (0-7)
+    // РџСЂРµРѕР±СЂР°Р·РѕРІР°РЅРёРµ РІ РєРѕРѕСЂРґРёРЅР°С‚С‹ РґРѕСЃРєРё (0-7)
     return Position(file - 'a', rank - '1');
 }
 
-// Вывод списка доступных команд
+// Р’С‹РІРѕРґ СЃРїРёСЃРєР° РґРѕСЃС‚СѓРїРЅС‹С… РєРѕРјР°РЅРґ
 void ChessGame::printHelp() const {
-    std::cout << "Команды\n"
-        << "move <откуда> <куда> - Переместить фигуру (Пример: move e2 e4)\n"
-        << "save <имя файла>     - Сохранение игры\n"
-        << "load <имя файла>     - Загрузка сохранения\n"
-        << "help                 - Показать справку\n"
-        << "exit                 - Выход из игры\n";
+    std::cout << "РљРѕРјР°РЅРґС‹\n"
+        << "move <РѕС‚РєСѓРґР°> <РєСѓРґР°> - РџРµСЂРµРјРµСЃС‚РёС‚СЊ С„РёРіСѓСЂСѓ (РџСЂРёРјРµСЂ: move e2 e4)\n"
+        << "save <РёРјСЏ С„Р°Р№Р»Р°>     - РЎРѕС…СЂР°РЅРµРЅРёРµ РёРіСЂС‹\n"
+        << "load <РёРјСЏ С„Р°Р№Р»Р°>     - Р—Р°РіСЂСѓР·РєР° СЃРѕС…СЂР°РЅРµРЅРёСЏ\n"
+        << "help                 - РџРѕРєР°Р·Р°С‚СЊ СЃРїСЂР°РІРєСѓ\n"
+        << "exit                 - Р’С‹С…РѕРґ РёР· РёРіСЂС‹\n";
 }
 
-// Основной игровой цикл
+// РћСЃРЅРѕРІРЅРѕР№ РёРіСЂРѕРІРѕР№ С†РёРєР»
 void ChessGame::run() {
-    std::cout << "Добро пожаловать в шахматы!\n";
+    std::cout << "Р”РѕР±СЂРѕ РїРѕР¶Р°Р»РѕРІР°С‚СЊ РІ С€Р°С…РјР°С‚С‹!\n";
     printHelp();
 
     std::string input;
     while (!board.isGameOver()) {
         board.printBoard();
-        std::cout << (board.getCurrentTurn() == Color::WHITE ? "White" : "Black") << "'s Ход: ";
+        std::cout << (board.getCurrentTurn() == Color::WHITE ? "White" : "Black") << "'s РҐРѕРґ: ";
         std::getline(std::cin, input);
 
         std::istringstream iss(input);
@@ -48,34 +48,34 @@ void ChessGame::run() {
             std::string fromStr, toStr;
             iss >> fromStr >> toStr;
 
-            // Преобразуем введенные позиции
+            // РџСЂРµРѕР±СЂР°Р·СѓРµРј РІРІРµРґРµРЅРЅС‹Рµ РїРѕР·РёС†РёРё
             Position from = parsePosition(fromStr);
             Position to = parsePosition(toStr);
 
             if (!from.isValid() || !to.isValid()) {
-                std::cout << "Неправильный ввод. Используйте формат: e2 e4\n";
+                std::cout << "РќРµРїСЂР°РІРёР»СЊРЅС‹Р№ РІРІРѕРґ. РСЃРїРѕР»СЊР·СѓР№С‚Рµ С„РѕСЂРјР°С‚: e2 e4\n";
                 continue;
             }
 
-            // Пытаемся выполнить ход
+            // РџС‹С‚Р°РµРјСЃСЏ РІС‹РїРѕР»РЅРёС‚СЊ С…РѕРґ
             if (!board.movePiece(from, to)) {
-                std::cout << "Недопустимый ход\n";
+                std::cout << "РќРµРґРѕРїСѓСЃС‚РёРјС‹Р№ С…РѕРґ\n";
             }
         }
         else if (command == "save") {
             std::string filename;
             iss >> filename;
             saveGame(filename);
-            std::cout << "Игра сохранена в " << filename << "\n";
+            std::cout << "РРіСЂР° СЃРѕС…СЂР°РЅРµРЅР° РІ " << filename << "\n";
         }
         else if (command == "load") {
             std::string filename;
             iss >> filename;
             if (loadGame(filename)) {
-                std::cout << "Игра загружена из " << filename << "\n";
+                std::cout << "РРіСЂР° Р·Р°РіСЂСѓР¶РµРЅР° РёР· " << filename << "\n";
             }
             else {
-                std::cout << "Не удалось загрузить игру из " << filename << "\n";
+                std::cout << "РќРµ СѓРґР°Р»РѕСЃСЊ Р·Р°РіСЂСѓР·РёС‚СЊ РёРіСЂСѓ РёР· " << filename << "\n";
             }
         }
         else if (command == "help") {
@@ -85,23 +85,23 @@ void ChessGame::run() {
             break;
         }
         else {
-            std::cout << "Неизвестная команда. Введите 'help' для справки.\n";
+            std::cout << "РќРµРёР·РІРµСЃС‚РЅР°СЏ РєРѕРјР°РЅРґР°. Р’РІРµРґРёС‚Рµ 'help' РґР»СЏ СЃРїСЂР°РІРєРё.\n";
         }
     }
 
-    // Если игра закончилась (мат), выводим финальное сообщение
+    // Р•СЃР»Рё РёРіСЂР° Р·Р°РєРѕРЅС‡РёР»Р°СЃСЊ (РјР°С‚), РІС‹РІРѕРґРёРј С„РёРЅР°Р»СЊРЅРѕРµ СЃРѕРѕР±С‰РµРЅРёРµ
     if (board.isGameOver()) {
         board.printBoard();
-        std::cout << "Игра окончена\n";
+        std::cout << "РРіСЂР° РѕРєРѕРЅС‡РµРЅР°\n";
     }
 }
 
-// Сохранение игры в файл
+// РЎРѕС…СЂР°РЅРµРЅРёРµ РёРіСЂС‹ РІ С„Р°Р№Р»
 void ChessGame::saveGame(const std::string& filename) const {
     board.saveGame(filename);
 }
 
-// Загрузка игры из файла
+// Р—Р°РіСЂСѓР·РєР° РёРіСЂС‹ РёР· С„Р°Р№Р»Р°
 bool ChessGame::loadGame(const std::string& filename) {
     return board.loadGame(filename);
 }

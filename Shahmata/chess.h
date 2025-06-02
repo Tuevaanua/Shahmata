@@ -1,4 +1,4 @@
-#ifndef CHESS_H
+п»ї#ifndef CHESS_H
 #define CHESS_H
 
 #include <iostream>
@@ -7,13 +7,13 @@
 #include <memory>
 #include <fstream>
 
-// Цвет фигур (белые/черные)
+// Р¦РІРµС‚ С„РёРіСѓСЂ (Р±РµР»С‹Рµ/С‡РµСЂРЅС‹Рµ)
 enum class Color { WHITE, BLACK };
 
-// Структура для представления позиции на шахматной доске
+// РЎС‚СЂСѓРєС‚СѓСЂР° РґР»СЏ РїСЂРµРґСЃС‚Р°РІР»РµРЅРёСЏ РїРѕР·РёС†РёРё РЅР° С€Р°С…РјР°С‚РЅРѕР№ РґРѕСЃРєРµ
 struct Position {
-    int x; // Горизонталь (0-7, соответствует a-h)
-    int y; // Вертикаль (0-7, соответствует 1-8)
+    int x; // Р“РѕСЂРёР·РѕРЅС‚Р°Р»СЊ (0-7, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ a-h)
+    int y; // Р’РµСЂС‚РёРєР°Р»СЊ (0-7, СЃРѕРѕС‚РІРµС‚СЃС‚РІСѓРµС‚ 1-8)
 
     Position(int x = -1, int y = -1) : x(x), y(y) {}
     bool operator==(const Position& other) const { return x == other.x && y == other.y; }
@@ -23,12 +23,12 @@ struct Position {
     }
 };
 
-// Базовый класс для всех шахматных фигур
+// Р‘Р°Р·РѕРІС‹Р№ РєР»Р°СЃСЃ РґР»СЏ РІСЃРµС… С€Р°С…РјР°С‚РЅС‹С… С„РёРіСѓСЂ
 class Piece {
 protected:
-    Color color;    // Цвет фигуры
-    Position position; // Текущая позиция
-    char symbol;    // Символ для отображения (например, 'P' для белой пешки)
+    Color color;    // Р¦РІРµС‚ С„РёРіСѓСЂС‹
+    Position position; // РўРµРєСѓС‰Р°СЏ РїРѕР·РёС†РёСЏ
+    char symbol;    // РЎРёРјРІРѕР» РґР»СЏ РѕС‚РѕР±СЂР°Р¶РµРЅРёСЏ (РЅР°РїСЂРёРјРµСЂ, 'P' РґР»СЏ Р±РµР»РѕР№ РїРµС€РєРё)
 
 public:
     Piece(Color color, Position position, char symbol)
@@ -36,22 +36,22 @@ public:
     }
     virtual ~Piece() = default;
 
-    // Геттеры и сеттеры
+    // Р“РµС‚С‚РµСЂС‹ Рё СЃРµС‚С‚РµСЂС‹
     Color getColor() const { return color; }
     Position getPosition() const { return position; }
     void setPosition(Position pos) { position = pos; }
     char getSymbol() const { return symbol; }
 
-    // Виртуальные методы, которые должны быть реализованы в производных классах
+    // Р’РёСЂС‚СѓР°Р»СЊРЅС‹Рµ РјРµС‚РѕРґС‹, РєРѕС‚РѕСЂС‹Рµ РґРѕР»Р¶РЅС‹ Р±С‹С‚СЊ СЂРµР°Р»РёР·РѕРІР°РЅС‹ РІ РїСЂРѕРёР·РІРѕРґРЅС‹С… РєР»Р°СЃСЃР°С…
     virtual bool isValidMove(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const = 0;
     virtual std::unique_ptr<Piece> clone() const = 0;
 
-    // Общие методы для всех фигур
+    // РћР±С‰РёРµ РјРµС‚РѕРґС‹ РґР»СЏ РІСЃРµС… С„РёРіСѓСЂ
     bool isPathClear(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const;
     Piece* getPieceAt(Position pos, const std::vector<std::unique_ptr<Piece>>& pieces) const;
 };
 
-// Классы для конкретных фигур (наследуются от Piece)
+// РљР»Р°СЃСЃС‹ РґР»СЏ РєРѕРЅРєСЂРµС‚РЅС‹С… С„РёРіСѓСЂ (РЅР°СЃР»РµРґСѓСЋС‚СЃСЏ РѕС‚ Piece)
 class Pawn : public Piece {
 public:
     Pawn(Color color, Position position);
@@ -94,31 +94,31 @@ public:
     std::unique_ptr<Piece> clone() const override;
 };
 
-// Класс, представляющий шахматную доску и игровую логику
+// РљР»Р°СЃСЃ, РїСЂРµРґСЃС‚Р°РІР»СЏСЋС‰РёР№ С€Р°С…РјР°С‚РЅСѓСЋ РґРѕСЃРєСѓ Рё РёРіСЂРѕРІСѓСЋ Р»РѕРіРёРєСѓ
 class ChessBoard {
 private:
-    std::vector<std::unique_ptr<Piece>> pieces; // Все фигуры на доске
-    Color currentTurn; // Чей сейчас ход
-    bool gameOver; // Флаг окончания игры
+    std::vector<std::unique_ptr<Piece>> pieces; // Р’СЃРµ С„РёРіСѓСЂС‹ РЅР° РґРѕСЃРєРµ
+    Color currentTurn; // Р§РµР№ СЃРµР№С‡Р°СЃ С…РѕРґ
+    bool gameOver; // Р¤Р»Р°Рі РѕРєРѕРЅС‡Р°РЅРёСЏ РёРіСЂС‹
 
-    // Вспомогательные методы
-    void initializePieces(); // Инициализация начальной расстановки фигур
-    Piece* getPieceAt(Position pos) const; // Получить фигуру по позиции
-    bool isCheck(Color kingColor) const; // Проверка, находится ли король под шахом
-    bool isCheckmate(Color kingColor); // Проверка на мат
-    bool isPositionUnderAttack(Position pos, Color attackingColor) const; // Под атакой ли позиция
-    Position getKingPosition(Color color) const; // Получить позицию короля
+    // Р’СЃРїРѕРјРѕРіР°С‚РµР»СЊРЅС‹Рµ РјРµС‚РѕРґС‹
+    void initializePieces(); // РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ РЅР°С‡Р°Р»СЊРЅРѕР№ СЂР°СЃСЃС‚Р°РЅРѕРІРєРё С„РёРіСѓСЂ
+    Piece* getPieceAt(Position pos) const; // РџРѕР»СѓС‡РёС‚СЊ С„РёРіСѓСЂСѓ РїРѕ РїРѕР·РёС†РёРё
+    bool isCheck(Color kingColor) const; // РџСЂРѕРІРµСЂРєР°, РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё РєРѕСЂРѕР»СЊ РїРѕРґ С€Р°С…РѕРј
+    bool isCheckmate(Color kingColor); // РџСЂРѕРІРµСЂРєР° РЅР° РјР°С‚
+    bool isPositionUnderAttack(Position pos, Color attackingColor) const; // РџРѕРґ Р°С‚Р°РєРѕР№ Р»Рё РїРѕР·РёС†РёСЏ
+    Position getKingPosition(Color color) const; // РџРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ РєРѕСЂРѕР»СЏ
 
 public:
     ChessBoard();
 
-    // Основные методы для управления игрой
-    bool movePiece(Position from, Position to); // Сделать ход
-    void printBoard() const; // Отобразить доску
-    bool isGameOver() const { return gameOver; } // Проверить, окончена ли игра
-    Color getCurrentTurn() const { return currentTurn; } // Чей сейчас ход
+    // РћСЃРЅРѕРІРЅС‹Рµ РјРµС‚РѕРґС‹ РґР»СЏ СѓРїСЂР°РІР»РµРЅРёСЏ РёРіСЂРѕР№
+    bool movePiece(Position from, Position to); // РЎРґРµР»Р°С‚СЊ С…РѕРґ
+    void printBoard() const; // РћС‚РѕР±СЂР°Р·РёС‚СЊ РґРѕСЃРєСѓ
+    bool isGameOver() const { return gameOver; } // РџСЂРѕРІРµСЂРёС‚СЊ, РѕРєРѕРЅС‡РµРЅР° Р»Рё РёРіСЂР°
+    Color getCurrentTurn() const { return currentTurn; } // Р§РµР№ СЃРµР№С‡Р°СЃ С…РѕРґ
 
-    // Методы для сохранения/загрузки игры
+    // РњРµС‚РѕРґС‹ РґР»СЏ СЃРѕС…СЂР°РЅРµРЅРёСЏ/Р·Р°РіСЂСѓР·РєРё РёРіСЂС‹
     bool saveGame(const std::string& filename) const;
     bool loadGame(const std::string& filename);
 };

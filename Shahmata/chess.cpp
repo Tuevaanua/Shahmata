@@ -1,65 +1,65 @@
-#include "chess.h"
+п»ї#include "chess.h"
 #include <cmath>
 #include <algorithm>
 
-// Проверка, свободен ли путь между текущей позицией и новой позицией
+// РџСЂРѕРІРµСЂРєР°, СЃРІРѕР±РѕРґРµРЅ Р»Рё РїСѓС‚СЊ РјРµР¶РґСѓ С‚РµРєСѓС‰РµР№ РїРѕР·РёС†РёРµР№ Рё РЅРѕРІРѕР№ РїРѕР·РёС†РёРµР№
 bool Piece::isPathClear(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const {
-    // Вычисляем разницу по x и y
+    // Р’С‹С‡РёСЃР»СЏРµРј СЂР°Р·РЅРёС†Сѓ РїРѕ x Рё y
     int dx = newPos.x - position.x;
     int dy = newPos.y - position.y;
 
-    // Определяем количество шагов (максимальное из dx и dy по модулю)
+    // РћРїСЂРµРґРµР»СЏРµРј РєРѕР»РёС‡РµСЃС‚РІРѕ С€Р°РіРѕРІ (РјР°РєСЃРёРјР°Р»СЊРЅРѕРµ РёР· dx Рё dy РїРѕ РјРѕРґСѓР»СЋ)
     int steps = std::max(std::abs(dx), std::abs(dy));
 
-    // Определяем направление движения по x и y
+    // РћРїСЂРµРґРµР»СЏРµРј РЅР°РїСЂР°РІР»РµРЅРёРµ РґРІРёР¶РµРЅРёСЏ РїРѕ x Рё y
     int xStep = dx == 0 ? 0 : (dx > 0 ? 1 : -1);
     int yStep = dy == 0 ? 0 : (dy > 0 ? 1 : -1);
 
-    // Проверяем все промежуточные позиции
+    // РџСЂРѕРІРµСЂСЏРµРј РІСЃРµ РїСЂРѕРјРµР¶СѓС‚РѕС‡РЅС‹Рµ РїРѕР·РёС†РёРё
     for (int i = 1; i < steps; ++i) {
         Position intermediate(position.x + i * xStep, position.y + i * yStep);
         if (getPieceAt(intermediate, pieces) != nullptr) {
-            return false; // Путь не свободен
+            return false; // РџСѓС‚СЊ РЅРµ СЃРІРѕР±РѕРґРµРЅ
         }
     }
-    return true; // Путь свободен
+    return true; // РџСѓС‚СЊ СЃРІРѕР±РѕРґРµРЅ
 }
 
-// Получить фигуру в указанной позиции
+// РџРѕР»СѓС‡РёС‚СЊ С„РёРіСѓСЂСѓ РІ СѓРєР°Р·Р°РЅРЅРѕР№ РїРѕР·РёС†РёРё
 Piece* Piece::getPieceAt(Position pos, const std::vector<std::unique_ptr<Piece>>& pieces) const {
     for (const auto& piece : pieces) {
         if (piece->getPosition() == pos) {
-            return piece.get(); // Возвращаем найденную фигуру
+            return piece.get(); // Р’РѕР·РІСЂР°С‰Р°РµРј РЅР°Р№РґРµРЅРЅСѓСЋ С„РёРіСѓСЂСѓ
         }
     }
-    return nullptr; // Фигура не найдена
+    return nullptr; // Р¤РёРіСѓСЂР° РЅРµ РЅР°Р№РґРµРЅР°
 }
 
-// Реализация методов для пешки
+// Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ РґР»СЏ РїРµС€РєРё
 Pawn::Pawn(Color color, Position position) : Piece(color, position, color == Color::WHITE ? 'P' : 'p') {}
 
 bool Pawn::isValidMove(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const {
     if (!newPos.isValid()) return false;
 
-    // Направление движения пешки (вверх для белых, вниз для черных)
+    // РќР°РїСЂР°РІР»РµРЅРёРµ РґРІРёР¶РµРЅРёСЏ РїРµС€РєРё (РІРІРµСЂС… РґР»СЏ Р±РµР»С‹С…, РІРЅРёР· РґР»СЏ С‡РµСЂРЅС‹С…)
     int direction = (color == Color::WHITE) ? 1 : -1;
-    // Стартовая линия для пешки (вторая для белых, седьмая для черных)
+    // РЎС‚Р°СЂС‚РѕРІР°СЏ Р»РёРЅРёСЏ РґР»СЏ РїРµС€РєРё (РІС‚РѕСЂР°СЏ РґР»СЏ Р±РµР»С‹С…, СЃРµРґСЊРјР°СЏ РґР»СЏ С‡РµСЂРЅС‹С…)
     int startRow = (color == Color::WHITE) ? 1 : 6;
 
-    // Движение вперед
+    // Р”РІРёР¶РµРЅРёРµ РІРїРµСЂРµРґ
     if (newPos.x == position.x) {
-        // Один шаг вперед
+        // РћРґРёРЅ С€Р°Рі РІРїРµСЂРµРґ
         if (newPos.y == position.y + direction && getPieceAt(newPos, pieces) == nullptr) {
             return true;
         }
-        // Два шага вперед с начальной позиции
+        // Р”РІР° С€Р°РіР° РІРїРµСЂРµРґ СЃ РЅР°С‡Р°Р»СЊРЅРѕР№ РїРѕР·РёС†РёРё
         if (position.y == startRow && newPos.y == position.y + 2 * direction &&
             getPieceAt(newPos, pieces) == nullptr &&
             getPieceAt(Position(position.x, position.y + direction), pieces) == nullptr) {
             return true;
         }
     }
-    // Взятие фигуры по диагонали
+    // Р’Р·СЏС‚РёРµ С„РёРіСѓСЂС‹ РїРѕ РґРёР°РіРѕРЅР°Р»Рё
     else if (abs(newPos.x - position.x) == 1 && newPos.y == position.y + direction) {
         Piece* target = getPieceAt(newPos, pieces);
         if (target != nullptr && target->getColor() != color) {
@@ -67,26 +67,26 @@ bool Pawn::isValidMove(Position newPos, const std::vector<std::unique_ptr<Piece>
         }
     }
 
-    return false; // Недопустимый ход
+    return false; // РќРµРґРѕРїСѓСЃС‚РёРјС‹Р№ С…РѕРґ
 }
 
 std::unique_ptr<Piece> Pawn::clone() const {
     return std::make_unique<Pawn>(*this);
 }
 
-// Реализация методов для ладьи
+// Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ РґР»СЏ Р»Р°РґСЊРё
 Rook::Rook(Color color, Position position) : Piece(color, position, color == Color::WHITE ? 'R' : 'r') {}
 
 bool Rook::isValidMove(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const {
     if (!newPos.isValid()) return false;
 
-    // Ладья может двигаться только по прямой
+    // Р›Р°РґСЊСЏ РјРѕР¶РµС‚ РґРІРёРіР°С‚СЊСЃСЏ С‚РѕР»СЊРєРѕ РїРѕ РїСЂСЏРјРѕР№
     if (newPos.x != position.x && newPos.y != position.y) return false;
 
-    // Проверяем, свободен ли путь
+    // РџСЂРѕРІРµСЂСЏРµРј, СЃРІРѕР±РѕРґРµРЅ Р»Рё РїСѓС‚СЊ
     if (!isPathClear(newPos, pieces)) return false;
 
-    // Проверяем, можно ли взять фигуру в конечной позиции
+    // РџСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РІР·СЏС‚СЊ С„РёРіСѓСЂСѓ РІ РєРѕРЅРµС‡РЅРѕР№ РїРѕР·РёС†РёРё
     Piece* target = getPieceAt(newPos, pieces);
     return target == nullptr || target->getColor() != color;
 }
@@ -95,20 +95,20 @@ std::unique_ptr<Piece> Rook::clone() const {
     return std::make_unique<Rook>(*this);
 }
 
-// Реализация методов для коня
+// Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ РґР»СЏ РєРѕРЅСЏ
 Knight::Knight(Color color, Position position) : Piece(color, position, color == Color::WHITE ? 'N' : 'n') {}
 
 bool Knight::isValidMove(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const {
     if (!newPos.isValid()) return false;
 
-    // Вычисляем разницу по x и y
+    // Р’С‹С‡РёСЃР»СЏРµРј СЂР°Р·РЅРёС†Сѓ РїРѕ x Рё y
     int dx = abs(newPos.x - position.x);
     int dy = abs(newPos.y - position.y);
 
-    // Конь ходит буквой "Г" - 2 в одну сторону и 1 в другую
+    // РљРѕРЅСЊ С…РѕРґРёС‚ Р±СѓРєРІРѕР№ "Р“" - 2 РІ РѕРґРЅСѓ СЃС‚РѕСЂРѕРЅСѓ Рё 1 РІ РґСЂСѓРіСѓСЋ
     if (!((dx == 1 && dy == 2) || (dx == 2 && dy == 1))) return false;
 
-    // Проверяем, можно ли взять фигуру в конечной позиции
+    // РџСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РІР·СЏС‚СЊ С„РёРіСѓСЂСѓ РІ РєРѕРЅРµС‡РЅРѕР№ РїРѕР·РёС†РёРё
     Piece* target = getPieceAt(newPos, pieces);
     return target == nullptr || target->getColor() != color;
 }
@@ -117,19 +117,19 @@ std::unique_ptr<Piece> Knight::clone() const {
     return std::make_unique<Knight>(*this);
 }
 
-// Реализация методов для слона
+// Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ РґР»СЏ СЃР»РѕРЅР°
 Bishop::Bishop(Color color, Position position) : Piece(color, position, color == Color::WHITE ? 'B' : 'b') {}
 
 bool Bishop::isValidMove(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const {
     if (!newPos.isValid()) return false;
 
-    // Слон ходит только по диагонали (разница по x и y должна быть одинаковой)
+    // РЎР»РѕРЅ С…РѕРґРёС‚ С‚РѕР»СЊРєРѕ РїРѕ РґРёР°РіРѕРЅР°Р»Рё (СЂР°Р·РЅРёС†Р° РїРѕ x Рё y РґРѕР»Р¶РЅР° Р±С‹С‚СЊ РѕРґРёРЅР°РєРѕРІРѕР№)
     if (abs(newPos.x - position.x) != abs(newPos.y - position.y)) return false;
 
-    // Проверяем, свободен ли путь
+    // РџСЂРѕРІРµСЂСЏРµРј, СЃРІРѕР±РѕРґРµРЅ Р»Рё РїСѓС‚СЊ
     if (!isPathClear(newPos, pieces)) return false;
 
-    // Проверяем, можно ли взять фигуру в конечной позиции
+    // РџСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РІР·СЏС‚СЊ С„РёРіСѓСЂСѓ РІ РєРѕРЅРµС‡РЅРѕР№ РїРѕР·РёС†РёРё
     Piece* target = getPieceAt(newPos, pieces);
     return target == nullptr || target->getColor() != color;
 }
@@ -138,22 +138,22 @@ std::unique_ptr<Piece> Bishop::clone() const {
     return std::make_unique<Bishop>(*this);
 }
 
-// Реализация методов для ферзя
+// Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ РґР»СЏ С„РµСЂР·СЏ
 Queen::Queen(Color color, Position position) : Piece(color, position, color == Color::WHITE ? 'Q' : 'q') {}
 
 bool Queen::isValidMove(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const {
     if (!newPos.isValid()) return false;
 
-    // Ферзь ходит как ладья или слон (по прямой или по диагонали)
+    // Р¤РµСЂР·СЊ С…РѕРґРёС‚ РєР°Рє Р»Р°РґСЊСЏ РёР»Рё СЃР»РѕРЅ (РїРѕ РїСЂСЏРјРѕР№ РёР»Рё РїРѕ РґРёР°РіРѕРЅР°Р»Рё)
     if (newPos.x != position.x && newPos.y != position.y &&
         abs(newPos.x - position.x) != abs(newPos.y - position.y)) {
         return false;
     }
 
-    // Проверяем, свободен ли путь
+    // РџСЂРѕРІРµСЂСЏРµРј, СЃРІРѕР±РѕРґРµРЅ Р»Рё РїСѓС‚СЊ
     if (!isPathClear(newPos, pieces)) return false;
 
-    // Проверяем, можно ли взять фигуру в конечной позиции
+    // РџСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РІР·СЏС‚СЊ С„РёРіСѓСЂСѓ РІ РєРѕРЅРµС‡РЅРѕР№ РїРѕР·РёС†РёРё
     Piece* target = getPieceAt(newPos, pieces);
     return target == nullptr || target->getColor() != color;
 }
@@ -162,16 +162,16 @@ std::unique_ptr<Piece> Queen::clone() const {
     return std::make_unique<Queen>(*this);
 }
 
-// Реализация методов для короля
+// Р РµР°Р»РёР·Р°С†РёСЏ РјРµС‚РѕРґРѕРІ РґР»СЏ РєРѕСЂРѕР»СЏ
 King::King(Color color, Position position) : Piece(color, position, color == Color::WHITE ? 'K' : 'k') {}
 
 bool King::isValidMove(Position newPos, const std::vector<std::unique_ptr<Piece>>& pieces) const {
     if (!newPos.isValid()) return false;
 
-    // Король может ходить только на одну клетку в любом направлении
+    // РљРѕСЂРѕР»СЊ РјРѕР¶РµС‚ С…РѕРґРёС‚СЊ С‚РѕР»СЊРєРѕ РЅР° РѕРґРЅСѓ РєР»РµС‚РєСѓ РІ Р»СЋР±РѕРј РЅР°РїСЂР°РІР»РµРЅРёРё
     if (abs(newPos.x - position.x) > 1 || abs(newPos.y - position.y) > 1) return false;
 
-    // Проверяем, можно ли взять фигуру в конечной позиции
+    // РџСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РЅРѕ Р»Рё РІР·СЏС‚СЊ С„РёРіСѓСЂСѓ РІ РєРѕРЅРµС‡РЅРѕР№ РїРѕР·РёС†РёРё
     Piece* target = getPieceAt(newPos, pieces);
     return target == nullptr || target->getColor() != color;
 }
@@ -180,14 +180,14 @@ std::unique_ptr<Piece> King::clone() const {
     return std::make_unique<King>(*this);
 }
 
-// Инициализация шахматной доски
+// РРЅРёС†РёР°Р»РёР·Р°С†РёСЏ С€Р°С…РјР°С‚РЅРѕР№ РґРѕСЃРєРё
 ChessBoard::ChessBoard() : currentTurn(Color::WHITE), gameOver(false) {
     initializePieces();
 }
 
-// Начальная расстановка фигур
+// РќР°С‡Р°Р»СЊРЅР°СЏ СЂР°СЃСЃС‚Р°РЅРѕРІРєР° С„РёРіСѓСЂ
 void ChessBoard::initializePieces() {
-    // Белые фигуры
+    // Р‘РµР»С‹Рµ С„РёРіСѓСЂС‹
     pieces.push_back(std::make_unique<Rook>(Color::WHITE, Position(0, 0)));
     pieces.push_back(std::make_unique<Knight>(Color::WHITE, Position(1, 0)));
     pieces.push_back(std::make_unique<Bishop>(Color::WHITE, Position(2, 0)));
@@ -196,12 +196,12 @@ void ChessBoard::initializePieces() {
     pieces.push_back(std::make_unique<Bishop>(Color::WHITE, Position(5, 0)));
     pieces.push_back(std::make_unique<Knight>(Color::WHITE, Position(6, 0)));
     pieces.push_back(std::make_unique<Rook>(Color::WHITE, Position(7, 0)));
-    // Белые пешки
+    // Р‘РµР»С‹Рµ РїРµС€РєРё
     for (int i = 0; i < 8; ++i) {
         pieces.push_back(std::make_unique<Pawn>(Color::WHITE, Position(i, 1)));
     }
 
-    // Черные фигуры
+    // Р§РµСЂРЅС‹Рµ С„РёРіСѓСЂС‹
     pieces.push_back(std::make_unique<Rook>(Color::BLACK, Position(0, 7)));
     pieces.push_back(std::make_unique<Knight>(Color::BLACK, Position(1, 7)));
     pieces.push_back(std::make_unique<Bishop>(Color::BLACK, Position(2, 7)));
@@ -210,13 +210,13 @@ void ChessBoard::initializePieces() {
     pieces.push_back(std::make_unique<Bishop>(Color::BLACK, Position(5, 7)));
     pieces.push_back(std::make_unique<Knight>(Color::BLACK, Position(6, 7)));
     pieces.push_back(std::make_unique<Rook>(Color::BLACK, Position(7, 7)));
-    // Черные пешки
+    // Р§РµСЂРЅС‹Рµ РїРµС€РєРё
     for (int i = 0; i < 8; ++i) {
         pieces.push_back(std::make_unique<Pawn>(Color::BLACK, Position(i, 6)));
     }
 }
 
-// Получить фигуру по позиции
+// РџРѕР»СѓС‡РёС‚СЊ С„РёРіСѓСЂСѓ РїРѕ РїРѕР·РёС†РёРё
 Piece* ChessBoard::getPieceAt(Position pos) const {
     for (const auto& piece : pieces) {
         if (piece->getPosition() == pos) {
@@ -226,61 +226,61 @@ Piece* ChessBoard::getPieceAt(Position pos) const {
     return nullptr;
 }
 
-// Проверка, находится ли король под шахом
+// РџСЂРѕРІРµСЂРєР°, РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё РєРѕСЂРѕР»СЊ РїРѕРґ С€Р°С…РѕРј
 bool ChessBoard::isCheck(Color kingColor) const {
-    // Находим позицию короля
+    // РќР°С…РѕРґРёРј РїРѕР·РёС†РёСЋ РєРѕСЂРѕР»СЏ
     Position kingPos = getKingPosition(kingColor);
     if (!kingPos.isValid()) return false;
 
-    // Проверяем, может ли какая-либо фигура противника атаковать короля
+    // РџСЂРѕРІРµСЂСЏРµРј, РјРѕР¶РµС‚ Р»Рё РєР°РєР°СЏ-Р»РёР±Рѕ С„РёРіСѓСЂР° РїСЂРѕС‚РёРІРЅРёРєР° Р°С‚Р°РєРѕРІР°С‚СЊ РєРѕСЂРѕР»СЏ
     for (const auto& piece : pieces) {
         if (piece->getColor() != kingColor && piece->isValidMove(kingPos, pieces)) {
-            return true; // Шах
+            return true; // РЁР°С…
         }
     }
-    return false; // Нет шаха
+    return false; // РќРµС‚ С€Р°С…Р°
 }
 
-// Проверка на мат
+// РџСЂРѕРІРµСЂРєР° РЅР° РјР°С‚
 bool ChessBoard::isCheckmate(Color kingColor) {
-    // Если нет шаха, то и мата быть не может
+    // Р•СЃР»Рё РЅРµС‚ С€Р°С…Р°, С‚Рѕ Рё РјР°С‚Р° Р±С‹С‚СЊ РЅРµ РјРѕР¶РµС‚
     if (!isCheck(kingColor)) return false;
 
     Position kingPos = getKingPosition(kingColor);
-    if (!kingPos.isValid()) return true; // Король не найден (технически это мат)
+    if (!kingPos.isValid()) return true; // РљРѕСЂРѕР»СЊ РЅРµ РЅР°Р№РґРµРЅ (С‚РµС…РЅРёС‡РµСЃРєРё СЌС‚Рѕ РјР°С‚)
 
-    // Проверяем все возможные ходы короля
+    // РџСЂРѕРІРµСЂСЏРµРј РІСЃРµ РІРѕР·РјРѕР¶РЅС‹Рµ С…РѕРґС‹ РєРѕСЂРѕР»СЏ
     for (int dx = -1; dx <= 1; ++dx) {
         for (int dy = -1; dy <= 1; ++dy) {
-            if (dx == 0 && dy == 0) continue; // Пропускаем текущую позицию
+            if (dx == 0 && dy == 0) continue; // РџСЂРѕРїСѓСЃРєР°РµРј С‚РµРєСѓС‰СѓСЋ РїРѕР·РёС†РёСЋ
 
             Position newPos(kingPos.x + dx, kingPos.y + dy);
-            if (!newPos.isValid()) continue; // Пропускаем недопустимые позиции
+            if (!newPos.isValid()) continue; // РџСЂРѕРїСѓСЃРєР°РµРј РЅРµРґРѕРїСѓСЃС‚РёРјС‹Рµ РїРѕР·РёС†РёРё
 
-            // Пропускаем позиции, занятые своими фигурами
+            // РџСЂРѕРїСѓСЃРєР°РµРј РїРѕР·РёС†РёРё, Р·Р°РЅСЏС‚С‹Рµ СЃРІРѕРёРјРё С„РёРіСѓСЂР°РјРё
             Piece* target = getPieceAt(newPos);
             if (target && target->getColor() == kingColor) continue;
 
-            // Временно перемещаем короля и проверяем, останется ли он под шахом
+            // Р’СЂРµРјРµРЅРЅРѕ РїРµСЂРµРјРµС‰Р°РµРј РєРѕСЂРѕР»СЏ Рё РїСЂРѕРІРµСЂСЏРµРј, РѕСЃС‚Р°РЅРµС‚СЃСЏ Р»Рё РѕРЅ РїРѕРґ С€Р°С…РѕРј
             auto kingPiece = getPieceAt(kingPos);
             auto temp = kingPiece->clone();
             kingPiece->setPosition(newPos);
 
             bool stillInCheck = isCheck(kingColor);
 
-            // Возвращаем короля на место
+            // Р’РѕР·РІСЂР°С‰Р°РµРј РєРѕСЂРѕР»СЏ РЅР° РјРµСЃС‚Рѕ
             kingPiece->setPosition(kingPos);
 
             if (!stillInCheck) {
-                return false; // Есть хотя бы один ход, убирающий шах - не мат
+                return false; // Р•СЃС‚СЊ С…РѕС‚СЏ Р±С‹ РѕРґРёРЅ С…РѕРґ, СѓР±РёСЂР°СЋС‰РёР№ С€Р°С… - РЅРµ РјР°С‚
             }
         }
     }
 
-    return true; // Нет допустимых ходов, убирающих шах - мат
+    return true; // РќРµС‚ РґРѕРїСѓСЃС‚РёРјС‹С… С…РѕРґРѕРІ, СѓР±РёСЂР°СЋС‰РёС… С€Р°С… - РјР°С‚
 }
 
-// Проверка, находится ли позиция под атакой фигур указанного цвета
+// РџСЂРѕРІРµСЂРєР°, РЅР°С…РѕРґРёС‚СЃСЏ Р»Рё РїРѕР·РёС†РёСЏ РїРѕРґ Р°С‚Р°РєРѕР№ С„РёРіСѓСЂ СѓРєР°Р·Р°РЅРЅРѕРіРѕ С†РІРµС‚Р°
 bool ChessBoard::isPositionUnderAttack(Position pos, Color attackingColor) const {
     for (const auto& piece : pieces) {
         if (piece->getColor() == attackingColor && piece->isValidMove(pos, pieces)) {
@@ -290,48 +290,48 @@ bool ChessBoard::isPositionUnderAttack(Position pos, Color attackingColor) const
     return false;
 }
 
-// Получить позицию короля указанного цвета
+// РџРѕР»СѓС‡РёС‚СЊ РїРѕР·РёС†РёСЋ РєРѕСЂРѕР»СЏ СѓРєР°Р·Р°РЅРЅРѕРіРѕ С†РІРµС‚Р°
 Position ChessBoard::getKingPosition(Color color) const {
     for (const auto& piece : pieces) {
         if (piece->getSymbol() == (color == Color::WHITE ? 'K' : 'k')) {
             return piece->getPosition();
         }
     }
-    return Position(-1, -1); // Король не найден
+    return Position(-1, -1); // РљРѕСЂРѕР»СЊ РЅРµ РЅР°Р№РґРµРЅ
 }
 
-// Основной метод для выполнения хода
+// РћСЃРЅРѕРІРЅРѕР№ РјРµС‚РѕРґ РґР»СЏ РІС‹РїРѕР»РЅРµРЅРёСЏ С…РѕРґР°
 bool ChessBoard::movePiece(Position from, Position to) {
-    if (gameOver) return false; // Игра уже окончена
+    if (gameOver) return false; // РРіСЂР° СѓР¶Рµ РѕРєРѕРЅС‡РµРЅР°
 
-    // Проверяем, есть ли фигура в начальной позиции и принадлежит ли она текущему игроку
+    // РџСЂРѕРІРµСЂСЏРµРј, РµСЃС‚СЊ Р»Рё С„РёРіСѓСЂР° РІ РЅР°С‡Р°Р»СЊРЅРѕР№ РїРѕР·РёС†РёРё Рё РїСЂРёРЅР°РґР»РµР¶РёС‚ Р»Рё РѕРЅР° С‚РµРєСѓС‰РµРјСѓ РёРіСЂРѕРєСѓ
     Piece* piece = getPieceAt(from);
     if (!piece || piece->getColor() != currentTurn) return false;
 
-    // Проверяем, допустим ли ход для этой фигуры
+    // РџСЂРѕРІРµСЂСЏРµРј, РґРѕРїСѓСЃС‚РёРј Р»Рё С…РѕРґ РґР»СЏ СЌС‚РѕР№ С„РёРіСѓСЂС‹
     if (!piece->isValidMove(to, pieces)) return false;
 
-    // Создаем временную копию фигуры для проверки
+    // РЎРѕР·РґР°РµРј РІСЂРµРјРµРЅРЅСѓСЋ РєРѕРїРёСЋ С„РёРіСѓСЂС‹ РґР»СЏ РїСЂРѕРІРµСЂРєРё
     auto temp = piece->clone();
     Piece* capturedPiece = getPieceAt(to);
 
-    // Временно выполняем ход
+    // Р’СЂРµРјРµРЅРЅРѕ РІС‹РїРѕР»РЅСЏРµРј С…РѕРґ
     piece->setPosition(to);
     bool inCheck = isCheck(currentTurn);
 
-    // Отменяем временный ход
+    // РћС‚РјРµРЅСЏРµРј РІСЂРµРјРµРЅРЅС‹Р№ С…РѕРґ
     piece->setPosition(from);
 
-    // Если ход ставит короля под шах, он недопустим
+    // Р•СЃР»Рё С…РѕРґ СЃС‚Р°РІРёС‚ РєРѕСЂРѕР»СЏ РїРѕРґ С€Р°С…, РѕРЅ РЅРµРґРѕРїСѓСЃС‚РёРј
     if (inCheck) {
-        std::cout << "Ход поставит короля под шах" << std::endl;
+        std::cout << "РҐРѕРґ РїРѕСЃС‚Р°РІРёС‚ РєРѕСЂРѕР»СЏ РїРѕРґ С€Р°С…" << std::endl;
         return false;
     }
 
-    // Выполняем ход окончательно
+    // Р’С‹РїРѕР»РЅСЏРµРј С…РѕРґ РѕРєРѕРЅС‡Р°С‚РµР»СЊРЅРѕ
     piece->setPosition(to);
 
-    // Удаляем съеденную фигуру, если она есть
+    // РЈРґР°Р»СЏРµРј СЃСЉРµРґРµРЅРЅСѓСЋ С„РёРіСѓСЂСѓ, РµСЃР»Рё РѕРЅР° РµСЃС‚СЊ
     if (capturedPiece) {
         pieces.erase(
             std::remove_if(pieces.begin(), pieces.end(),
@@ -342,22 +342,22 @@ bool ChessBoard::movePiece(Position from, Position to) {
         );
     }
 
-    // Проверяем, не поставили ли мы мат противнику
+    // РџСЂРѕРІРµСЂСЏРµРј, РЅРµ РїРѕСЃС‚Р°РІРёР»Рё Р»Рё РјС‹ РјР°С‚ РїСЂРѕС‚РёРІРЅРёРєСѓ
     Color opponentColor = currentTurn == Color::WHITE ? Color::BLACK : Color::WHITE;
     if (isCheckmate(opponentColor)) {
         gameOver = true;
-        std::cout << (currentTurn == Color::WHITE ? "White" : "Black") << " МАТ " << std::endl;
+        std::cout << (currentTurn == Color::WHITE ? "White" : "Black") << " РњРђРў " << std::endl;
     }
     else if (isCheck(opponentColor)) {
-        std::cout << (opponentColor == Color::WHITE ? "White" : "Black") << " ШАХ " << std::endl;
+        std::cout << (opponentColor == Color::WHITE ? "White" : "Black") << " РЁРђРҐ " << std::endl;
     }
 
-    // Передаем ход другому игроку
+    // РџРµСЂРµРґР°РµРј С…РѕРґ РґСЂСѓРіРѕРјСѓ РёРіСЂРѕРєСѓ
     currentTurn = opponentColor;
     return true;
 }
 
-// Отображение шахматной доски
+// РћС‚РѕР±СЂР°Р¶РµРЅРёРµ С€Р°С…РјР°С‚РЅРѕР№ РґРѕСЃРєРё
 void ChessBoard::printBoard() const {
     std::cout << "  a b c d e f g h" << std::endl;
     for (int y = 7; y >= 0; --y) {
@@ -376,15 +376,15 @@ void ChessBoard::printBoard() const {
     std::cout << "  a b c d e f g h" << std::endl;
 }
 
-// Сохранение игры в файл
+// РЎРѕС…СЂР°РЅРµРЅРёРµ РёРіСЂС‹ РІ С„Р°Р№Р»
 bool ChessBoard::saveGame(const std::string& filename) const {
     std::ofstream out(filename);
     if (!out) return false;
 
-    // Записываем, чей сейчас ход
+    // Р—Р°РїРёСЃС‹РІР°РµРј, С‡РµР№ СЃРµР№С‡Р°СЃ С…РѕРґ
     out << (currentTurn == Color::WHITE ? "white" : "black") << "\n";
 
-    // Записываем все фигуры и их позиции
+    // Р—Р°РїРёСЃС‹РІР°РµРј РІСЃРµ С„РёРіСѓСЂС‹ Рё РёС… РїРѕР·РёС†РёРё
     for (const auto& piece : pieces) {
         out << piece->getSymbol() << " "
             << piece->getPosition().x << " "
@@ -394,27 +394,27 @@ bool ChessBoard::saveGame(const std::string& filename) const {
     return true;
 }
 
-// Загрузка игры из файла
+// Р—Р°РіСЂСѓР·РєР° РёРіСЂС‹ РёР· С„Р°Р№Р»Р°
 bool ChessBoard::loadGame(const std::string& filename) {
     std::ifstream in(filename);
     if (!in) return false;
 
-    // Очищаем текущие фигуры
+    // РћС‡РёС‰Р°РµРј С‚РµРєСѓС‰РёРµ С„РёРіСѓСЂС‹
     pieces.clear();
 
-    // Читаем, чей ход
+    // Р§РёС‚Р°РµРј, С‡РµР№ С…РѕРґ
     std::string turn;
     in >> turn;
     currentTurn = (turn == "white") ? Color::WHITE : Color::BLACK;
 
-    // Читаем фигуры и их позиции
+    // Р§РёС‚Р°РµРј С„РёРіСѓСЂС‹ Рё РёС… РїРѕР·РёС†РёРё
     char symbol;
     int x, y;
     while (in >> symbol >> x >> y) {
         Color color = isupper(symbol) ? Color::WHITE : Color::BLACK;
         Position pos(x, y);
 
-        // Создаем фигуры в соответствии с прочитанными данными
+        // РЎРѕР·РґР°РµРј С„РёРіСѓСЂС‹ РІ СЃРѕРѕС‚РІРµС‚СЃС‚РІРёРё СЃ РїСЂРѕС‡РёС‚Р°РЅРЅС‹РјРё РґР°РЅРЅС‹РјРё
         switch (tolower(symbol)) {
         case 'p': pieces.push_back(std::make_unique<Pawn>(color, pos)); break;
         case 'r': pieces.push_back(std::make_unique<Rook>(color, pos)); break;
